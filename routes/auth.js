@@ -9,13 +9,17 @@ const dotenv = require("dotenv");
 router.post("/register", async (req, res) => {
   try {
     dotenv.config();
-    const { username, password } = req.body;
-    const user = await User.create({ username, password });
+    const { username, password, emailId } = req.body;
+    const user = await User.create({ username, emailId, password });
     // await user.save();
     console.log("hello", process.env.JWT_SECRET);
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { id: user._id, emailId: user.emailId, username: user.username },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
 
     res.status(201).json({ token });
   } catch (error) {
@@ -26,8 +30,9 @@ router.post("/register", async (req, res) => {
 // Login
 router.post("/login", async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
+    const { emailId, password } = req.body;
+    console.log(req.body);
+    const user = await User.findOne({ emailId });
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -40,7 +45,7 @@ router.post("/login", async (req, res) => {
       }
     );
 
-    res.json({ username, token });
+    res.json({ emailId, token });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
