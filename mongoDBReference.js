@@ -6,6 +6,7 @@ const userById = await User.findById("64e1a2b3c4d5e6f7a8b9c0d1");
 
 // 3. Find all users (optionally with a filter)
 const allUsers = await User.find(); // all users
+const allUserSorted= User.find().sort({name: 1})// 1 or -1 based o what alphabetic or reverse alpahabetic
 const filteredUsers = await User.find({ username: /john/i }); // users with 'john' in username
 
 // 4. Create and save a new user (shortcut)
