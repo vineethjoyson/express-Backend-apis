@@ -34,3 +34,19 @@ await User.findByIdAndUpdate("64e1a2b3c4d5e6f7a8b9c0d1", {
 await User.findByIdAndDelete("64e1a2b3c4d5e6f7a8b9c0d1");
 
 //
+
+const users = await User.find({ age: { $gt: 5 } });
+console.log(users);
+🔍 Explanation:
+User.find() → fetches documents from the collection
+
+{ age: { $gt: 5 } } → means “where age > 5”
+
+🧠 Common Comparison Operators
+Operator	Meaning	Example	SQL Equivalent
+$eq	Equal	{ age: { $eq: 25 } }	age = 25
+$ne	Not equal	{ age: { $ne: 25 } }	age != 25
+$gt	Greater than	{ age: { $gt: 25 } }	age > 25
+$gte	Greater than or equal	{ age: { $gte: 25 } }	age >= 25
+$lt	Less than	{ age: { $lt: 25 } }	age < 25
+$lte	Less than or equal	{ age: { $lte: 25 } }	age <= 25
