@@ -34,6 +34,9 @@ await User.findByIdAndUpdate("64e1a2b3c4d5e6f7a8b9c0d1", {
 await User.findByIdAndDelete("64e1a2b3c4d5e6f7a8b9c0d1");
 
 //
+//FIND
+db.find({query},{projection})
+
 
 const users = await User.find({ age: { $gt: 5 } });
 console.log(users);
@@ -43,10 +46,89 @@ User.find() → fetches documents from the collection
 { age: { $gt: 5 } } → means “where age > 5”
 
 🧠 Common Comparison Operators
-Operator	Meaning	Example	SQL Equivalent
+/*Operator	Meaning	Example	SQL Equivalent
 $eq	Equal	{ age: { $eq: 25 } }	age = 25
 $ne	Not equal	{ age: { $ne: 25 } }	age != 25
 $gt	Greater than	{ age: { $gt: 25 } }	age > 25
 $gte	Greater than or equal	{ age: { $gte: 25 } }	age >= 25
 $lt	Less than	{ age: { $lt: 25 } }	age < 25
 $lte	Less than or equal	{ age: { $lte: 25 } }	age <= 25
+*/
+
+//Multi Query + projection  // like select a , b from DBTable where a>5 and b<2 
+const users = await User.find(
+  { age: { $gt: 18 }, country: "India" },
+  { name: 1, email: 1, age: 1, _id: 0 }
+);
+
+1 → include field
+
+0 → exclude field
+
+//Update
+
+db.updateOne(filter,update)
+await User.updateOne(
+  { name: "Vineeth" },         // filter: find user(s) to update
+  { $set: { age: 28 } }        // update operation
+);
+await User.updateOne(
+  { name: "Vineeth" },         // filter: find user(s) to update
+  { $unset: { age: 28 } }        // update operation
+);
+
+await User.updateOne(
+  { email: { $exists: true } },    // filter condition
+  { $set: { verified: true } }     // update action
+);
+
+
+$and
+$or
+$nor
+
+🧩 1️⃣ $and — All Conditions Must Be True
+
+Meaning: Only match documents where all given conditions are true.
+
+✅ Example:
+
+const users = await User.find({
+  $and: [
+    { age: { $gt: 18 } },
+    { country: "India" }
+  ]
+});
+
+
+Meaning: Match documents where any of the listed conditions are true.
+
+✅ Example:
+
+const users = await User.find({
+  $or: [
+    { age: { $lt: 18 } },
+    { country: "USA" }
+  ]
+});
+
+🧩 3️⃣ $nor — None of the Conditions Must Be True
+
+Meaning: Match documents where none of the conditions are true (like logical NOT).
+
+✅ Example:
+const users = await User.find({
+  $nor: [
+    { age: { $lt: 18 } },
+    { country: "USA" }
+  ]
+});
+
+$not
+
+const users = await User.find({
+  $and: [
+    { age: { $not: { $gt: 18 } } },
+    { country: "India" }
+  ]
+});
